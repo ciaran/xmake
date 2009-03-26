@@ -20,12 +20,12 @@
 
 - (NSString*)buildPath
 {
-	return [[NSUserDefaults standardUserDefaults] stringForKey:@"BuildPath"];
+	return [[[[NSUserDefaults standardUserDefaults] stringForKey:@"BuildPath"] stringByStandardizingPath] stringByAppendingString:@"/"];
 }
 
 - (NSString*)sourcePath
 {
-	return [[NSUserDefaults standardUserDefaults] stringForKey:@"SourcePath"];
+	return [[[[NSUserDefaults standardUserDefaults] stringForKey:@"SourcePath"] stringByStandardizingPath] stringByAppendingString:@"/"];
 }
 
 - (TaskWrapper*)taskWithTarget:(NSString*)target
@@ -97,11 +97,17 @@
 			NSArray* components   = [[output substringWithRange:matchedRange] componentsSeparatedByString:@":"];
 			NSString* path        = [components objectAtIndex:0];
 			NSUInteger lineNumber = [[components objectAtIndex:1] intValue];
-			[string addAttribute:NSLinkAttributeName
-                        value:[NSString stringWithFormat:@"txmt://open?url=file://%@&line=%d", path, lineNumber]
-                        range:matchedRange];
+			NSString* pathText    = [output substringWithRange:matchedRange];
+			if(self.sourcePath && [[pathText substringToIndex:self.sourcePath.length] isEqualToString:self.sourcePath])
+				pathText = [pathText substringFromIndex:self.sourcePath.length];
+
+			NSMutableAttributedString* pathString = [[[NSMutableAttributedString alloc] initWithString:pathText attributes:attributes] autorelease];
+			[pathString addAttribute:NSLinkAttributeName value:[NSString stringWithFormat:@"txmt://open?url=file://%@&line=%d", path, lineNumber] range:NSMakeRange(0, pathString.length)];
+			[string replaceCharactersInRange:matchedRange withAttributedString:pathString];
+			matchedRange.location += pathString.length + 1;
 		}
-		matchedRange.location += matchedRange.length + 1;
+		else
+			matchedRange.location += matchedRange.length + 1;
 	}
 
 	[consoleView.textStorage appendAttributedString:string];
