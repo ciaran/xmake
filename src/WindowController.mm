@@ -87,9 +87,10 @@
 	NSRange matchedRange = {0, 0};
 	while(matchedRange.location < output.length)
 	{
+		NSRange searchRange = NSMakeRange(matchedRange.location, output.length - matchedRange.location);
 		matchedRange = [output rangeOfRegex:@"^(/[^:]+?):(\\d+)?"
                                   options:RKLMultiline
-                                  inRange:NSMakeRange(matchedRange.location, output.length - matchedRange.location)
+                                  inRange:searchRange
                                   capture:0
                                     error:NULL];
 		if(matchedRange.location != NSNotFound)
@@ -106,6 +107,12 @@
 			[string replaceCharactersInRange:matchedRange withAttributedString:pathString];
 			matchedRange.location += pathString.length + 1;
 		}
+		else if((matchedRange = [output rangeOfRegex:@"\\[\\s*(\\d+)%\\]" inRange:searchRange]).location != NSNotFound)
+		{
+			double percentage = [[output substringWithRange:NSMakeRange(matchedRange.location + 1, 3)] doubleValue];
+			[progressIndicator setDoubleValue:percentage];
+			matchedRange.location += matchedRange.length + 1;
+		}
 		else
 			matchedRange.location += matchedRange.length + 1;
 	}
@@ -117,6 +124,7 @@
 - (void)processStarted
 {
 	[[[consoleView textStorage] mutableString] appendString:@"=== STARTED ===\n"];
+	[progressIndicator setDoubleValue:0];
 	self.isRunning = YES;
 }
 

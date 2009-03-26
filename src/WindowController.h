@@ -6,6 +6,7 @@
 	IBOutlet NSTextView* consoleView;
 	TaskWrapper* task;
 	IBOutlet NSProgressIndicator* busyIndicator;
+	IBOutlet NSProgressIndicator* progressIndicator;
 	BOOL isRunning;
 }
 @property (readonly) BOOL isRunning;
