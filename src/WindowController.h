@@ -7,6 +7,7 @@
 	TaskWrapper* task;
 	IBOutlet NSProgressIndicator* busyIndicator;
 	IBOutlet NSProgressIndicator* progressIndicator;
+	IBOutlet NSTextField* statusField;
 	BOOL isRunning;
 }
 @property (readonly) BOOL isRunning;

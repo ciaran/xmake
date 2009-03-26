@@ -35,6 +35,11 @@
                                   workingDirectory:self.buildPath] autorelease];
 }
 
+- (void)setStatusText:(NSString*)text
+{
+	[statusField setStringValue:text];
+}
+
 // ===========
 // = Actions =
 // ===========
@@ -126,6 +131,7 @@
 	[[[consoleView textStorage] mutableString] appendString:@"=== STARTED ===\n"];
 	[progressIndicator setDoubleValue:0];
 	self.isRunning = YES;
+	[self setStatusText:@"Started"];
 }
 
 - (void)processFinished
@@ -135,5 +141,6 @@
 		self.isRunning = NO;
 		[[[consoleView textStorage] mutableString] appendString:@"=== ENDED ===\n"];
 	}
+	[self setStatusText:@"Idle"];
 }
 @end
