@@ -4,6 +4,8 @@
 @interface WindowController ()
 @property (retain) TaskWrapper* task;
 @property (assign) BOOL isRunning;
+@property (readonly) NSString* buildPath;
+@property (readonly) NSString* sourcePath;
 @end
 
 @implementation WindowController
@@ -16,11 +18,21 @@
 
 @synthesize task, isRunning;
 
+- (NSString*)buildPath
+{
+	return [[NSUserDefaults standardUserDefaults] stringForKey:@"BuildPath"];
+}
+
+- (NSString*)sourcePath
+{
+	return [[NSUserDefaults standardUserDefaults] stringForKey:@"SourcePath"];
+}
+
 - (TaskWrapper*)taskWithTarget:(NSString*)target
 {
 	return [[[TaskWrapper alloc] initWithController:self
                                          arguments:[NSArray arrayWithObjects:@"/usr/bin/make", target, nil]
-                                  workingDirectory:@"/Users/ciaran/code/avian-build"] autorelease];
+                                  workingDirectory:self.buildPath] autorelease];
 }
 
 // ===========
@@ -30,7 +42,12 @@
 - (void)startTask:(TaskWrapper*)aTask
 {
 	BOOL changeTask = YES;
-	if(self.isRunning)
+	if(!self.buildPath)
+	{
+		NSRunAlertPanel(@"No build path", @"Set the build directory in preferences.", @"OK", nil, nil);
+		changeTask = NO;
+	}
+	else if(self.isRunning)
 	{
 		int choice = NSRunAlertPanel(@"Stop task?", @"The currently running task will have to be aborted first.", @"OK", @"Cancel", nil);
 		changeTask = (choice == NSAlertDefaultReturn); // "OK"
@@ -99,7 +116,10 @@
 
 - (void)processFinished
 {
-	self.isRunning = NO;
-	[[[consoleView textStorage] mutableString] appendString:@"=== ENDED ===\n"];
+	if(self.isRunning)
+	{
+		self.isRunning = NO;
+		[[[consoleView textStorage] mutableString] appendString:@"=== ENDED ===\n"];
+	}
 }
 @end
