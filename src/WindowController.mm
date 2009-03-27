@@ -112,15 +112,12 @@
 			[string replaceCharactersInRange:matchedRange withAttributedString:pathString];
 			matchedRange.location += pathString.length + 1;
 		}
-		else if((matchedRange = [output rangeOfRegex:@"\\[\\s*(\\d+)%\\]" inRange:searchRange]).location != NSNotFound)
-		{
-			double percentage = [[output substringWithRange:NSMakeRange(matchedRange.location + 1, 3)] doubleValue];
-			[progressIndicator setDoubleValue:percentage];
-			matchedRange.location += matchedRange.length + 1;
-		}
 		else
 			matchedRange.location += matchedRange.length + 1;
 	}
+
+	if(NSString* progress = [output stringByMatching:@"\\[\\s*(\\d+)%\\]" capture:1])
+		[progressIndicator setDoubleValue:[progress doubleValue]];
 
 	[consoleView.textStorage appendAttributedString:string];
 	[consoleView scrollRangeToVisible:NSMakeRange(consoleView.textStorage.length, 0)]; // TODO Only scroll if scroller is at bottom
