@@ -18,6 +18,11 @@
 
 @synthesize sourcePath, progressValue;
 
+- (NSString*)openLinkForFile:(NSString*)path line:(NSUInteger)lineNumber
+{
+	return [NSString stringWithFormat:@"txmt://open?url=file://%@&line=%d", path, lineNumber];
+}
+
 - (NSAttributedString*)processOutput:(NSString*)output
 {
 	static NSDictionary* const attributes = [[NSDictionary alloc] initWithObjectsAndKeys:[NSFont fontWithName:@"DejaVuSansMono" size:11], NSFontAttributeName, nil];
@@ -42,7 +47,7 @@
 				pathText = [pathText substringFromIndex:self.sourcePath.length];
 
 			NSMutableAttributedString* pathString = [[[NSMutableAttributedString alloc] initWithString:pathText attributes:attributes] autorelease];
-			[pathString addAttribute:NSLinkAttributeName value:[NSString stringWithFormat:@"txmt://open?url=file://%@&line=%d", path, lineNumber] range:NSMakeRange(0, pathString.length)];
+			[pathString addAttribute:NSLinkAttributeName value:[self openLinkForFile:path line:lineNumber] range:NSMakeRange(0, pathString.length)];
 			[string replaceCharactersInRange:matchedRange withAttributedString:pathString];
 			matchedRange.location += pathString.length + 1;
 		}
