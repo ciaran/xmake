@@ -1,5 +1,6 @@
 #import <Cocoa/Cocoa.h>
 #import "TaskWrapper.h"
+#import "OutputParser.h"
 
 @interface WindowController : NSWindowController <TaskWrapperController>
 {
@@ -9,6 +10,7 @@
 	IBOutlet NSProgressIndicator* progressIndicator;
 	IBOutlet NSTextField* statusField;
 	BOOL isRunning;
+	OutputParser* parser;
 }
 @property (readonly) BOOL isRunning;
 - (IBAction)build:(id)sender;

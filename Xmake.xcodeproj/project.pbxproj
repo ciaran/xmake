@@ -17,6 +17,7 @@
 		910E9E0C0F7927DB001C826E /* Build.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 910E9E040F7927DB001C826E /* Build.tiff */; };
 		910E9E0D0F7927DB001C826E /* Run.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 910E9E050F7927DB001C826E /* Run.tiff */; };
 		910E9E120F7927EC001C826E /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 910E9E100F7927EC001C826E /* MainMenu.xib */; };
+		9118536C0F7D2FCF00594491 /* OutputParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9118536B0F7D2FCF00594491 /* OutputParser.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -39,6 +40,8 @@
 		910E9E050F7927DB001C826E /* Run.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Run.tiff; path = resources/Run.tiff; sourceTree = "<group>"; };
 		910E9E0A0F7927DB001C826E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = resources/Info.plist; sourceTree = "<group>"; };
 		910E9E110F7927EC001C826E /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = resources/English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		9118536A0F7D2FCF00594491 /* OutputParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OutputParser.h; path = src/OutputParser.h; sourceTree = "<group>"; };
+		9118536B0F7D2FCF00594491 /* OutputParser.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OutputParser.mm; path = src/OutputParser.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +115,8 @@
 				910E9DFB0F7927CF001C826E /* WindowController.h */,
 				910E9DFC0F7927CF001C826E /* Xmake_Prefix.pch */,
 				910E9DFD0F7927CF001C826E /* WindowController.mm */,
+				9118536A0F7D2FCF00594491 /* OutputParser.h */,
+				9118536B0F7D2FCF00594491 /* OutputParser.mm */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -189,6 +194,7 @@
 				910E9DFF0F7927CF001C826E /* TaskWrapper.m in Sources */,
 				910E9E000F7927CF001C826E /* main.m in Sources */,
 				910E9E010F7927CF001C826E /* WindowController.mm in Sources */,
+				9118536C0F7D2FCF00594491 /* OutputParser.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

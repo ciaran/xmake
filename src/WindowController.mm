@@ -1,22 +1,23 @@
 #import "WindowController.h"
-#import "RegexKitLite.h"
 
 @interface WindowController ()
 @property (retain) TaskWrapper* task;
 @property (assign) BOOL isRunning;
 @property (readonly) NSString* buildPath;
 @property (readonly) NSString* sourcePath;
+@property (retain) OutputParser* parser;
 @end
 
 @implementation WindowController
 - (void)dealloc
 {
+	self.parser = nil;
 	[task stopProcess];
 	[task release];
 	[super dealloc];
 }
 
-@synthesize task, isRunning;
+@synthesize task, isRunning, parser;
 
 - (NSString*)buildPath
 {
@@ -86,43 +87,16 @@
 
 - (void)appendOutput:(NSString*)output
 {
-	static NSDictionary* const attributes = [[NSDictionary alloc] initWithObjectsAndKeys:[NSFont fontWithName:@"DejaVuSansMono" size:11], NSFontAttributeName, nil];
-	NSMutableAttributedString* string = [[[NSMutableAttributedString alloc] initWithString:output attributes:attributes] autorelease];
-
-	NSRange matchedRange = {0, 0};
-	while(matchedRange.location < string.string.length)
-	{
-		NSRange searchRange = NSMakeRange(matchedRange.location, string.string.length - matchedRange.location);
-		matchedRange = [string.string rangeOfRegex:@"^(/[^:]+?):(\\d+)?"
-                                           options:RKLMultiline
-                                           inRange:searchRange
-                                           capture:0
-                                             error:NULL];
-		if(matchedRange.location != NSNotFound)
-		{
-			NSArray* components   = [[string.string substringWithRange:matchedRange] componentsSeparatedByString:@":"];
-			NSString* path        = [components objectAtIndex:0];
-			NSUInteger lineNumber = [[components objectAtIndex:1] intValue];
-			NSString* pathText    = [string.string substringWithRange:matchedRange];
-			if(self.sourcePath && [[pathText substringToIndex:self.sourcePath.length] isEqualToString:self.sourcePath])
-				pathText = [pathText substringFromIndex:self.sourcePath.length];
-
-			NSMutableAttributedString* pathString = [[[NSMutableAttributedString alloc] initWithString:pathText attributes:attributes] autorelease];
-			[pathString addAttribute:NSLinkAttributeName value:[NSString stringWithFormat:@"txmt://open?url=file://%@&line=%d", path, lineNumber] range:NSMakeRange(0, pathString.length)];
-			[string replaceCharactersInRange:matchedRange withAttributedString:pathString];
-			matchedRange.location += pathString.length + 1;
-		}
-	}
-
-	if(NSString* progress = [output stringByMatching:@"\\[\\s*(\\d+)%\\]" capture:1]) // FIXME this should really search for the last occurence in the string
-		[progressIndicator setDoubleValue:[progress doubleValue]];
-
+	NSAttributedString* string = [parser processOutput:output];
+	[progressIndicator setDoubleValue:parser.progressValue];
 	[consoleView.textStorage appendAttributedString:string];
 	[consoleView scrollRangeToVisible:NSMakeRange(consoleView.textStorage.length, 0)]; // TODO Only scroll if scroller is at bottom
 }
 
 - (void)processStarted
 {
+	self.parser = [[[OutputParser alloc] init] autorelease];
+	parser.sourcePath = self.sourcePath;
 	[[[consoleView textStorage] mutableString] appendString:@"=== STARTED ===\n"];
 	[progressIndicator setDoubleValue:0];
 	self.isRunning = YES;
