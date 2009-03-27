@@ -90,20 +90,20 @@
 	NSMutableAttributedString* string = [[[NSMutableAttributedString alloc] initWithString:output attributes:attributes] autorelease];
 
 	NSRange matchedRange = {0, 0};
-	while(matchedRange.location < output.length)
+	while(matchedRange.location < string.string.length)
 	{
-		NSRange searchRange = NSMakeRange(matchedRange.location, output.length - matchedRange.location);
-		matchedRange = [output rangeOfRegex:@"^(/[^:]+?):(\\d+)?"
-                                  options:RKLMultiline
-                                  inRange:searchRange
-                                  capture:0
-                                    error:NULL];
+		NSRange searchRange = NSMakeRange(matchedRange.location, string.string.length - matchedRange.location);
+		matchedRange = [string.string rangeOfRegex:@"^(/[^:]+?):(\\d+)?"
+                                           options:RKLMultiline
+                                           inRange:searchRange
+                                           capture:0
+                                             error:NULL];
 		if(matchedRange.location != NSNotFound)
 		{
-			NSArray* components   = [[output substringWithRange:matchedRange] componentsSeparatedByString:@":"];
+			NSArray* components   = [[string.string substringWithRange:matchedRange] componentsSeparatedByString:@":"];
 			NSString* path        = [components objectAtIndex:0];
 			NSUInteger lineNumber = [[components objectAtIndex:1] intValue];
-			NSString* pathText    = [output substringWithRange:matchedRange];
+			NSString* pathText    = [string.string substringWithRange:matchedRange];
 			if(self.sourcePath && [[pathText substringToIndex:self.sourcePath.length] isEqualToString:self.sourcePath])
 				pathText = [pathText substringFromIndex:self.sourcePath.length];
 
@@ -112,11 +112,9 @@
 			[string replaceCharactersInRange:matchedRange withAttributedString:pathString];
 			matchedRange.location += pathString.length + 1;
 		}
-		else
-			matchedRange.location += matchedRange.length + 1;
 	}
 
-	if(NSString* progress = [output stringByMatching:@"\\[\\s*(\\d+)%\\]" capture:1])
+	if(NSString* progress = [output stringByMatching:@"\\[\\s*(\\d+)%\\]" capture:1]) // FIXME this should really search for the last occurence in the string
 		[progressIndicator setDoubleValue:[progress doubleValue]];
 
 	[consoleView.textStorage appendAttributedString:string];
