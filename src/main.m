@@ -2,7 +2,7 @@
 //  main.m
 //  Xmake
 //
-//  Created by Ciarán Walsh on 24/03/2009.
+//  Created by Ciar√°n Walsh on 24/03/2009.
 //  Copyright __MyCompanyName__ 2009. All rights reserved.
 //
 
