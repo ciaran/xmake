@@ -72,7 +72,7 @@
 		while(matchedRange.location < string.string.length)
 		{
 			NSRange searchRange = NSMakeRange(matchedRange.location, string.string.length - matchedRange.location);
-			matchedRange = [string.string rangeOfRegex:@"^\\s*([^/].+?):(\\d+)"
+			matchedRange = [string.string rangeOfRegex:@"^\\s*([^/:].+?\\.[a-z]+):(\\d+)"
 	                                           options:RKLMultiline
 	                                           inRange:searchRange
 	                                           capture:0
